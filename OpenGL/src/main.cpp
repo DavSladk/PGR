@@ -80,16 +80,27 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    float positions[6] = {
-        -0.5f, -0.5f,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+    float positions[] = {
+        -0.5f, -0.5f, // 0
+         0.5f, -0.5f, // 1
+         0.5f,  0.5f, // 2
+        -0.5f,  0.5f  // 3
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
     };
 
     GLuint buffer = 0; // id of buffer
     glGenBuffers(1, &buffer); // generating buffer
     glBindBuffer(GL_ARRAY_BUFFER, buffer); // select buffer as array buffer
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW); // where to get data
+    glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(float), positions, GL_STATIC_DRAW); // where to get data
+
+    GLuint ibo = 0; // id of index buffer
+    glGenBuffers(1, &ibo); // generating buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // select buffer as element array buffer
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // where to get data
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
     glEnableVertexAttribArray(0);
@@ -100,13 +111,14 @@ int main(void)
     GLuint shader = CreateShader(vertexShader, fragmentShader);
     glUseProgram(shader);
 
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
