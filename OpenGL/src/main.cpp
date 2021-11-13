@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <GL/glew.h> // Must be included first
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -14,7 +14,7 @@ int main(void)
    
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "PGR - proceduralni generovani nabytku", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -24,10 +24,23 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    // Must be after glfwMakeContextCurrent
     if (glewInit() != GLEW_OK)
         std::cerr << "Error!" << std::endl;
 
     std::cout << glGetString(GL_VERSION) << std::endl;
+
+    float positions[6] = {
+        -0.5f, -0.5f,
+         0.5f,  0.5f,
+         0.5f, -0.5f
+    };
+
+    GLuint buffer = 0; // id of buffer
+    glGenBuffers(1, &buffer); // generating buffer
+    glBindBuffer(GL_ARRAY_BUFFER, buffer); // select buffer as array buffer
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW); // where to get data
+
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -35,11 +48,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBegin(GL_TRIANGLES);
-        glVertex2d(-0.5f, -0.5f);
-        glVertex2d(0.5f, 0.5f);
-        glVertex2d(0.5f, -0.5f);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
