@@ -2,6 +2,17 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <fstream>
+#include <string>
+
+static std::string ParseShader(const std::string& filepath)
+{
+    std::ifstream file(filepath);
+
+    std::string content((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
+    
+    return content;
+}
 
 static GLuint CompileShader(GLuint type, const std::string& source)
 {
@@ -83,22 +94,9 @@ int main(void)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
     glEnableVertexAttribArray(0);
 
-    std::string vertexShader =
-        "#version 330 core\n"
-        "layout(location = 0) in vec4 position;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
-
-    std::string fragmentShader =
-        "#version 330 core\n"
-        "layout(location = 0) out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
-
+    std::string vertexShader = ParseShader("res/shaders/basic.vs");
+    std::string fragmentShader = ParseShader("res/shaders/basic.fs");
+    std::cout << vertexShader << std::endl << fragmentShader << std::endl;
     GLuint shader = CreateShader(vertexShader, fragmentShader);
     glUseProgram(shader);
 
@@ -116,6 +114,8 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    glDeleteProgram(shader);
 
     glfwTerminate();
     return 0;
