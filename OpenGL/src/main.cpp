@@ -8,6 +8,7 @@
 #include <Renderer.h>
 #include <VertexBuffer.h>
 #include <IndexBuffer.h>
+#include <VertexArray.h>
 
 static std::string ParseShader(const std::string& filepath)
 {
@@ -100,14 +101,17 @@ int main(void)
         2, 3, 0
     };
 
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    VertexArray vao;
+    vao.Bind();
 
     VertexBuffer vbo(positions, 2 * 4 * sizeof(float));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
-
+    vbo.Bind();
+    
+    VertexBufferLayout layout;
+    layout.Push<float>(2);
+    
+    vao.AddBuffer(vbo, layout);
+    
     IndexBuffer ibo(indices, 6);    
 
     std::string vertexShader = ParseShader("res/shaders/basic.vert");
@@ -132,8 +136,8 @@ int main(void)
 
         glUseProgram(shader);
 
-        glBindVertexArray(vao);
-        ibo.Bind();
+        //vao.Bind();
+        //ibo.Bind();
 
         // Setting uniform
         glUniform4f(location, (float)sin(glfwGetTime()), (float)sin(glfwGetTime()/2), (float)sin(glfwGetTime()/4), 1.0f);
