@@ -128,20 +128,31 @@ int main(void)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
     glEnableVertexAttribArray(0);
 
-    std::string vertexShader = ParseShader("res/shaders/basic.vs");
-    std::string fragmentShader = ParseShader("res/shaders/basic.fs");
+    std::string vertexShader = ParseShader("res/shaders/basic.vert");
+    std::string fragmentShader = ParseShader("res/shaders/basic.frag");
     std::cout << vertexShader << std::endl << fragmentShader << std::endl;
     GLuint shader = CreateShader(vertexShader, fragmentShader);
     glUseProgram(shader);
+
+    // Loading location of uniform
+    int location = glGetUniformLocation(shader, "u_Color");
+    if (location != -1)
+    {
+        glUniform4f(location, (float)sin(glfwGetTime()), 0.3f, 0.8f, 1.0f);
+    }
+
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        glClearColor((float)cos(glfwGetTime()), (float)cos(glfwGetTime() / 2), (float)cos(glfwGetTime() / 4), 1.0f);
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+        // Setting uniform
+        glUniform4f(location, (float)sin(glfwGetTime()), (float)sin(glfwGetTime()/2), (float)sin(glfwGetTime()/4), 1.0f);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
