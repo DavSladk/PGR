@@ -84,7 +84,11 @@ int main(void)
 
     /* Initialize the library */
     if (!glfwInit())
-        return -1;   
+        return -1;
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "PGR - proceduralni generovani nabytku", NULL, NULL);
@@ -115,6 +119,10 @@ int main(void)
         2, 3, 0
     };
 
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
     GLuint buffer = 0; // id of buffer
     glGenBuffers(1, &buffer); // generating buffer
     glBindBuffer(GL_ARRAY_BUFFER, buffer); // select buffer as array buffer
@@ -125,14 +133,13 @@ int main(void)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // select buffer as element array buffer
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // where to get data
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
 
     std::string vertexShader = ParseShader("res/shaders/basic.vert");
     std::string fragmentShader = ParseShader("res/shaders/basic.frag");
     std::cout << vertexShader << std::endl << fragmentShader << std::endl;
     GLuint shader = CreateShader(vertexShader, fragmentShader);
-    glUseProgram(shader);
 
     // Loading location of uniform
     int location = glGetUniformLocation(shader, "u_Color");
@@ -147,8 +154,12 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         glClearColor((float)cos(glfwGetTime()), (float)cos(glfwGetTime() / 2), (float)cos(glfwGetTime() / 4), 1.0f);
-        /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shader);
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
         // Setting uniform
         glUniform4f(location, (float)sin(glfwGetTime()), (float)sin(glfwGetTime()/2), (float)sin(glfwGetTime()/4), 1.0f);
