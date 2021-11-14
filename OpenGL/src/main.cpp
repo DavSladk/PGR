@@ -5,28 +5,9 @@
 #include <fstream>
 #include <string>
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-static void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR)
-    {
-
-    }
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-    while (GLenum error = glGetError())
-    {
-        std::cerr << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-}
+#include <Renderer.h>
+#include <VertexBuffer.h>
+#include <IndexBuffer.h>
 
 static std::string ParseShader(const std::string& filepath)
 {
@@ -123,18 +104,11 @@ int main(void)
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    GLuint buffer = 0; // id of buffer
-    glGenBuffers(1, &buffer); // generating buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffer); // select buffer as array buffer
-    glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(float), positions, GL_STATIC_DRAW); // where to get data
-
-    GLuint ibo = 0; // id of index buffer
-    glGenBuffers(1, &ibo); // generating buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // select buffer as element array buffer
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // where to get data
-
+    VertexBuffer vbo(positions, 2 * 4 * sizeof(float));
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); // define what is in buffer
+
+    IndexBuffer ibo(indices, 6);    
 
     std::string vertexShader = ParseShader("res/shaders/basic.vert");
     std::string fragmentShader = ParseShader("res/shaders/basic.frag");
@@ -159,7 +133,7 @@ int main(void)
         glUseProgram(shader);
 
         glBindVertexArray(vao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        ibo.Bind();
 
         // Setting uniform
         glUniform4f(location, (float)sin(glfwGetTime()), (float)sin(glfwGetTime()/2), (float)sin(glfwGetTime()/4), 1.0f);
