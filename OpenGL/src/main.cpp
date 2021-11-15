@@ -66,26 +66,24 @@ int main(void)
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
 
-    //vao.Unbind();
-    //shader.Unbind();
-    //vbo.Unbind();
-    //ibo.Unbind();
+    vao.Unbind();
+    shader.Unbind();
+    vbo.Unbind();
+    ibo.Unbind();
+
+    Renderer renderer;
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor((float)cos(glfwGetTime()), (float)cos(glfwGetTime() / 2), (float)cos(glfwGetTime() / 4), 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        //shader.Bind();
-        //vao.Bind();
-        //vbo.Bind();
-        //ibo.Bind();
+        renderer.Clear();
 
         // Setting uniform
         shader.SetUniform4f("u_Color", (float)sin(glfwGetTime()), (float)sin(glfwGetTime() / 2), (float)sin(glfwGetTime() / 4), 1.0f);
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        
+        // Draw
+        renderer.Draw(vao, ibo, shader);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
