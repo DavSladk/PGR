@@ -7,10 +7,12 @@ layout(location = 3) in float texType;
 
 out vec2 v_TexCoord;
 out float v_TexType;
+out vec4 v_Color;
 
 void main()
 {
    gl_Position = position;
    v_TexCoord = texCoord;
    v_TexType = texType;
+   v_Color = color;
 };

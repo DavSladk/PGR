@@ -77,7 +77,7 @@ int main(void)
     layout.Push<float>(3); // position
     layout.Push<float>(3); // color
     layout.Push<float>(2); // texture
-    layout.Push<float>(1); // color
+    layout.Push<float>(1); // texture type
     
     vao.AddBuffer(/* vbo, */ layout);
     
