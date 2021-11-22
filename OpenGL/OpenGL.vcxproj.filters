@@ -77,8 +77,5 @@
     <Image Include="res\textures\metal.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\textures\gold-dollar-1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

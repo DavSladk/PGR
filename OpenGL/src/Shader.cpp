@@ -5,7 +5,6 @@ Shader::Shader(const std::string& vertFile, const std::string& fragFile)
 {
     std::string vertexShader = ParseShader(vertFile);
     std::string fragmentShader = ParseShader(fragFile);
-    std::cout << vertexShader << std::endl << fragmentShader << std::endl;
     m_RendererID = CreateShader(vertexShader, fragmentShader);
 }
 

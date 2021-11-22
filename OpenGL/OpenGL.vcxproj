@@ -184,7 +184,6 @@
     <ClInclude Include="header\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\textures\gold-dollar-1.png" />
     <Image Include="res\textures\metal.png" />
     <Image Include="res\textures\wood.png" />
   </ItemGroup>
