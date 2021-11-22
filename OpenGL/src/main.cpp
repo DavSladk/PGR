@@ -1,5 +1,7 @@
 #include <GL/glew.h> // Must be included first
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include <vector>
@@ -81,7 +83,9 @@ int main(void)
     
     vao.AddBuffer(/* vbo, */ layout);
     
-    IndexBuffer ibo(indices, 6);    
+    IndexBuffer ibo(indices, 6);
+
+    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
@@ -95,6 +99,8 @@ int main(void)
     shader.SetUniform1i("u_Texture_Metal", 0);
     shader.SetUniform1i("u_Texture_Wood", 1);
 
+    shader.SetUniformMatrix4f("u_MVP", proj);
+
     vao.Unbind();
     shader.Unbind();
     vbo.Unbind();
@@ -107,9 +113,6 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         renderer.Clear();
-
-        // Setting uniform
-        // shader.SetUniform4f("u_Color", (float)sin(glfwGetTime()), (float)sin(glfwGetTime() / 2), (float)sin(glfwGetTime() / 4), 1.0f);
         
         // Draw
         renderer.Draw(vao, ibo, shader);
