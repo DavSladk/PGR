@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw_gl3.h>
 
 #include <iostream>
 #include <vector>
@@ -89,9 +91,7 @@ int main(void)
     //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
     glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
-
-    glm::mat4 mvp = proj * view * model;
+    
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
@@ -105,8 +105,6 @@ int main(void)
     shader.SetUniform1i("u_Texture_Metal", 0);
     shader.SetUniform1i("u_Texture_Wood", 1);
 
-    shader.SetUniformMatrix4f("u_MVP", mvp);
-
     vao.Unbind();
     shader.Unbind();
     vbo.Unbind();
@@ -114,15 +112,43 @@ int main(void)
 
     Renderer renderer;
 
+    ImGui::CreateContext();
+    ImGui_ImplGlfwGL3_Init(window, true);
+    ImGui::StyleColorsDark();
+
+    glm::vec3 translation(200, 200, 0);
+
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         renderer.Clear();
+
+        ImGui_ImplGlfwGL3_NewFrame();
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+
+        glm::mat4 mvp = proj * view * model;
+
+        shader.SetUniformMatrix4f("u_MVP", mvp);
         
         // Draw
         renderer.Draw(vao, ibo, shader);
 
+        {
+            static int counter = 0;
+            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+            if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+                counter++;
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+        }
+
+        ImGui::Render();
+        ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -130,6 +156,8 @@ int main(void)
         glfwPollEvents();
     }
 
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }
