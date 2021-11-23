@@ -88,6 +88,10 @@ int main(void)
 
     //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
     glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+    glm::mat4 mvp = proj * view * model;
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
@@ -101,7 +105,7 @@ int main(void)
     shader.SetUniform1i("u_Texture_Metal", 0);
     shader.SetUniform1i("u_Texture_Wood", 1);
 
-    shader.SetUniformMatrix4f("u_MVP", proj);
+    shader.SetUniformMatrix4f("u_MVP", mvp);
 
     vao.Unbind();
     shader.Unbind();
