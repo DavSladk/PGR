@@ -15,6 +15,55 @@
 #include <Shader.h>
 #include <Texture.h>
 
+float x = 0;
+float y = 0;
+float z = 0;
+float distance = -5.0f;
+
+float lastTime = 0;
+float currentTime = 0;
+float deltaTime = 0;
+
+float sensitivity = 50.0f;
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        x -= 1 * deltaTime;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        x += 1 * deltaTime;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        y -= 1 * deltaTime;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        y += 1 * deltaTime;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+    {
+        distance += 1 * deltaTime;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+    {
+        distance -= 1 * deltaTime;
+    }
+}
+
 int main(void)
 {
     GLFWwindow* window;
@@ -30,8 +79,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    //window = glfwCreateWindow(640, 480, "PGR - proceduralni generovani nabytku", NULL, NULL);
-    window = glfwCreateWindow(960, 540, "PGR - proceduralni generovani nabytku", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "PGR - proceduralni generovani nabytku", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -58,19 +106,40 @@ int main(void)
 
     std::vector<Vertex>vertices =
     {
-        {100.0f,100.0f, 0.0f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    0.0f},
-        {200.0f,100.0f, 0.0f,    0.5f, 0.5f, 0.5f,    1.0f, 0.0f,    0.0f},
-        {200.0f, 200.0f, 0.0f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    0.0f},
-        {100.0f, 200.0f, 0.0f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    0.0f}
+        {-0.5f,-0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    0.0f}, // 1
+        { 0.5f,-0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 0.0f,    0.0f}, // 2
+        { 0.5f, 0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    0.0f}, // 3
+        {-0.5f, 0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    0.0f}, // 4
+
+        {-0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    0.0f}, // 5
+        { 0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 0.0f,    0.0f}, // 6
+        { 0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    0.0f}, // 7
+        {-0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    0.0f}  // 8
     };
 
     unsigned int indices[] = {
         0, 1, 2,
-        2, 3, 0
+        2, 3, 0,
+
+        4, 5, 6,
+        6, 7, 4,
+
+        4, 5, 1,
+        1, 0, 4,
+
+        7, 6, 2,
+        2, 3, 7,
+
+        1, 5, 6,
+        6, 2, 1,
+
+        0, 4, 7,
+        7, 3, 0
     };
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
 
     VertexArray vao;
     vao.Bind();
@@ -86,12 +155,7 @@ int main(void)
     
     vao.AddBuffer(/* vbo, */ layout);
     
-    IndexBuffer ibo(indices, 6);
-
-    //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-    glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-    
+    IndexBuffer ibo(indices, 36);    
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
@@ -116,35 +180,62 @@ int main(void)
     ImGui_ImplGlfwGL3_Init(window, true);
     ImGui::StyleColorsDark();
 
-    glm::vec3 translation(200, 200, 0);
+    int height = 0;
+    int width = 0;
+    int depth = 0;
+    int doors = 0;
+    int drawers = 0;
+    int legs = 0;
+    int legs_heigh = 0;
+    int legs_width = 0;
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        lastTime = currentTime;
+        currentTime = (float)glfwGetTime();
+        deltaTime = currentTime - lastTime;
+
+        processInput(window);
+
         renderer.Clear();
 
         ImGui_ImplGlfwGL3_NewFrame();
 
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, y * glm::radians(sensitivity), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, x * glm::radians(sensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        glm::mat4 mvp = proj * view * model;
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, distance));
 
-        shader.SetUniformMatrix4f("u_MVP", mvp);
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+
+        shader.SetUniformMatrix4f("model", model);
+        shader.SetUniformMatrix4f("view", view);
+        shader.SetUniformMatrix4f("projection", projection);
         
         // Draw
         renderer.Draw(vao, ibo, shader);
 
         {
             static int counter = 0;
-            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+            //ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+            
+            //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::InputInt("height", &height );
+            ImGui::InputInt("width", &width );
+            ImGui::InputInt("depth", &depth );
+            ImGui::InputInt("doors", &doors );
+            ImGui::InputInt("drawers", &drawers );
+            ImGui::InputInt("legs", &legs);
+            ImGui::InputInt("legs height", &legs_heigh);
+            ImGui::InputInt("legs width", &legs_width);
+            if (ImGui::Button("Generate"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
                 counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
+            ImGui::Text("Arrow keys to rotate, page up/down for zoom, esc to exit.");
         }
 
         ImGui::Render();
