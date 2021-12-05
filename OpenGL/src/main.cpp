@@ -3,7 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw_gl3.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 #include <iostream>
 #include <vector>
@@ -168,11 +169,7 @@ int main(void)
     vbo.Unbind();
     ibo.Unbind();
 
-    Renderer renderer;
-
-    ImGui::CreateContext();
-    ImGui_ImplGlfwGL3_Init(window, true);
-    ImGui::StyleColorsDark();
+    Renderer renderer;    
 
     int height = 0;
     int width = 0;
@@ -182,6 +179,8 @@ int main(void)
     int legs = 0;
     int legs_heigh = 0;
     int legs_width = 0;
+
+    Model modelo(window);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     /* Loop until the user closes the window */
@@ -195,7 +194,9 @@ int main(void)
 
         renderer.Clear();
 
-        ImGui_ImplGlfwGL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, y * glm::radians(sensitivity), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -214,28 +215,8 @@ int main(void)
         // Draw
         renderer.Draw(vao, ibo, shader);
 
-        {
-            static int counter = 0;
-            //ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
-            
-            //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::InputInt("height", &height );
-            ImGui::InputInt("width", &width );
-            ImGui::InputInt("depth", &depth );
-            ImGui::InputInt("doors", &doors );
-            ImGui::InputInt("drawers", &drawers );
-            ImGui::InputInt("legs", &legs);
-            ImGui::InputInt("legs height", &legs_heigh);
-            ImGui::InputInt("legs width", &legs_width);
-            if (ImGui::Button("Generate"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-                counter++;
-            ImGui::Text("Arrow keys to rotate.");
-            ImGui::Text("Page up/down for zoom.");
-            ImGui::Text("Esc to exit.");
-        }
+        modelo.generateGUI();     
 
-        ImGui::Render();
-        ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -243,8 +224,6 @@ int main(void)
         glfwPollEvents();
     }
 
-    ImGui_ImplGlfwGL3_Shutdown();
-    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }

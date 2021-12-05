@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 struct Vertex {
 	float position[3];
@@ -8,6 +10,9 @@ struct Vertex {
 	float texture[2];
 	float textureType;
 };
+
+class Row;
+class Column;
 
 class Column
 {
@@ -41,6 +46,10 @@ public:
 	void generateModel(std::vector<Vertex>& vertices);
 	void generateGUI();
 
-	Model();
+	Model(GLFWwindow* window);
 	~Model();
+
+	// Test stuff
+	bool show_demo_window = true;
+	bool show_another_window = false;
 };

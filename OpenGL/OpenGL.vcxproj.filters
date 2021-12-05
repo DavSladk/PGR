@@ -42,6 +42,9 @@
     <ClCompile Include="header\vendor\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="header\vendor\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,10 +54,16 @@
     <ClCompile Include="header\vendor\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="header\vendor\imgui\imgui_impl_glfw_gl3.cpp">
+    <ClCompile Include="header\vendor\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Model.cpp">
+    <ClCompile Include="header\vendor\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="header\vendor\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="header\vendor\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1341,28 +1350,34 @@
     <ClInclude Include="header\vendor\glm\vector_relational.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="header\vendor\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\vendor\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\vendor\imgui\imgui_impl_glfw_gl3.h">
+    <ClInclude Include="header\vendor\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vendor\imgui\imgui_impl_opengl3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\vendor\imgui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\vendor\imgui\stb_rect_pack.h">
+    <ClInclude Include="header\vendor\imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\vendor\imgui\stb_textedit.h">
+    <ClInclude Include="header\vendor\imgui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\vendor\imgui\stb_truetype.h">
+    <ClInclude Include="header\vendor\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Model.h">
+    <ClInclude Include="header\vendor\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
