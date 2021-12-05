@@ -14,6 +14,7 @@
 #include <VertexArray.h>
 #include <Shader.h>
 #include <Texture.h>
+#include <Model.h>
 
 float x = 0;
 float y = 0;
@@ -97,13 +98,6 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    struct Vertex {
-        float position[3];
-        float color[3];
-        float texture[2];
-        float textureType;
-    };
-
     std::vector<Vertex>vertices =
     {
         {-0.5f,-0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    0.0f}, // 1
@@ -111,10 +105,10 @@ int main(void)
         { 0.5f, 0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    0.0f}, // 3
         {-0.5f, 0.5f, -0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    0.0f}, // 4
 
-        {-0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    0.0f}, // 5
-        { 0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 0.0f,    0.0f}, // 6
-        { 0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    0.0f}, // 7
-        {-0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    0.0f}  // 8
+        {-0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    1.0f}, // 5
+        { 0.5f,-0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 0.0f,    1.0f}, // 6
+        { 0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    1.0f, 1.0f,    1.0f}, // 7
+        {-0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    1.0f}  // 8
     };
 
     unsigned int indices[] = {
@@ -189,7 +183,7 @@ int main(void)
     int legs_heigh = 0;
     int legs_width = 0;
 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -235,7 +229,9 @@ int main(void)
             ImGui::InputInt("legs width", &legs_width);
             if (ImGui::Button("Generate"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
                 counter++;
-            ImGui::Text("Arrow keys to rotate, page up/down for zoom, esc to exit.");
+            ImGui::Text("Arrow keys to rotate.");
+            ImGui::Text("Page up/down for zoom.");
+            ImGui::Text("Esc to exit.");
         }
 
         ImGui::Render();
