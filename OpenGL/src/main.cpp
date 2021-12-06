@@ -65,8 +65,11 @@ void processInput(GLFWwindow* window)
         distance -= 1 * deltaTime;
     }
 }
-
+#ifdef CUSTOM_DEBUG
 int main(void)
+#else
+int WinMain(void)
+#endif // CUSTOM_DEBUG
 {
     GLFWwindow* window;
 
@@ -112,7 +115,8 @@ int main(void)
         {-0.5f, 0.5f, 0.5f,    0.5f, 0.5f, 0.5f,    0.0f, 1.0f,    1.0f}  // 8
     };
 
-    unsigned int indices[] = {
+    std::vector<unsigned int> indices =
+    {
         0, 1, 2,
         2, 3, 0,
 
@@ -148,9 +152,9 @@ int main(void)
     layout.Push<float>(2); // texture
     layout.Push<float>(1); // texture type
     
-    vao.AddBuffer(/* vbo, */ layout);
+    vao.AddBuffer(/* vbo,*/ layout);
     
-    IndexBuffer ibo(indices, 36);    
+    IndexBuffer ibo(indices.data(), indices.size());
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     shader.Bind();
@@ -171,15 +175,6 @@ int main(void)
 
     Renderer renderer;    
 
-    int height = 0;
-    int width = 0;
-    int depth = 0;
-    int doors = 0;
-    int drawers = 0;
-    int legs = 0;
-    int legs_heigh = 0;
-    int legs_width = 0;
-
     Model modelo(window);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -193,10 +188,6 @@ int main(void)
         processInput(window);
 
         renderer.Clear();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, y * glm::radians(sensitivity), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -215,7 +206,10 @@ int main(void)
         // Draw
         renderer.Draw(vao, ibo, shader);
 
-        modelo.generateGUI();     
+        if (modelo.generateGUI())
+        {
+            modelo.generateModel(vertices, indices);
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

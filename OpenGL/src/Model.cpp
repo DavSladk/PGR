@@ -1,55 +1,159 @@
 #include <Model.h>
 
-void Model::generateModel(std::vector<Vertex>& vertices)
+void Model::generateModel( std::vector<Vertex>& vertices, std::vector<unsigned int> &indices )
 {
-	//TO DO
+    std::cout << "JEBEJ" << std::endl;
+    /*vertices.clear();
+    indices.clear();
+
+    Vertex tmpVer;
+    
+    tmpVer.color[0] = 0.0f;
+    tmpVer.color[1] = 0.0f;
+    tmpVer.color[2] = 0.0f;
+    tmpVer.textureType = 0.0f;
+
+    tmpVer.position[0] = 0.0f;
+    tmpVer.position[1] = 0.0f;
+    tmpVer.position[2] = 0.0f;
+    tmpVer.texture[0] = 0.0f;
+    tmpVer.texture[1] = 0.0f;
+    vertices.push_back(tmpVer);
+
+    tmpVer.position[0] = (float)width;
+    tmpVer.position[1] = 0.0f;
+    tmpVer.position[2] = 0.0f;
+    tmpVer.texture[0] = 1.0f;
+    tmpVer.texture[1] = 0.0f;
+    vertices.push_back(tmpVer);
+
+    tmpVer.position[0] = (float)width;
+    tmpVer.position[1] = (float)height;
+    tmpVer.position[2] = 0.0f;
+    tmpVer.texture[0] = 1.0f;
+    tmpVer.texture[1] = 1.0f;
+    vertices.push_back(tmpVer);
+
+    tmpVer.position[0] = 0.0f;
+    tmpVer.position[1] = (float)height;
+    tmpVer.position[2] = 0.0f;
+    tmpVer.texture[0] = 0.0f;
+    tmpVer.texture[1] = 1.0f;
+    vertices.push_back(tmpVer);
+
+    indices.push_back(0);
+    indices.push_back(1);
+    indices.push_back(2);
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(0);*/
 }
 
-void Model::generateGUI()
+bool Model::generateGUI()
 {
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    bool clicked = false;
 
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     {
-        static float f = 0.0f;
-        static int counter = 0;
+        ImGui::Begin("Parametrs");
+        ImGui::InputInt("Height", &height);
+        ImGui::InputInt("Width", &width);
+        ImGui::InputInt("Depth", &depth);
+        ImGui::InputInt("Texture", &texture);
+        ImGui::InputInt("Columns", &columnCount);
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        if (ImGui::Button("Generate"))
+        {
+            clicked = true;
+        }
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        generateColumns(columnCount, columns, "");
+                
         ImGui::End();
     }
 
-    // 3. Show another simple window.
-    if (show_another_window)
-    {
-        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
-        ImGui::End();
-    }
-
-    // Rendering
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    return clicked;
+}
+
+void Model::generateColumns(int& columnCount, std::vector<Column> &columns, std::string str)
+{
+    if (columnCount < 0)
+    {
+        return;
+    }
+
+    while (columnCount > columns.size())
+    {
+        columns.push_back(Column());
+    }
+
+    while (columnCount < columns.size())
+    {
+        columns.pop_back();
+    }
+
+    for (int i = 0; i < columns.size(); i++)
+    {
+        std::string number = str + std::to_string(i + 1) + ".";
+        std::string text = number + " Column";
+        
+        if (ImGui::TreeNode(text.c_str()))
+        {
+            ImGui::InputInt("Ration", &(columns[i].ratio));
+            ImGui::InputInt("Rows", &(columns[i].rowCount));
+            generateRows(columns[i].rowCount, columns[i].rows, number);
+            ImGui::TreePop();
+        }
+    }
+}
+
+void Model::generateRows(int& rowCount, std::vector<Row>& rows, std::string str)
+{
+    if (rowCount < 0)
+    {
+        return;
+    }
+
+    while (rowCount > rows.size())
+    {
+        rows.push_back(Row());
+    }
+
+    while (rowCount < rows.size())
+    {
+        rows.pop_back();
+    }
+
+    for (int i = 0; i < rows.size(); i++)
+    {
+        std::string number = str + std::to_string(i + 1) + ".";
+        std::string text = number + " Row";
+
+        if (ImGui::TreeNode(text.c_str()))
+        {
+            ImGui::InputInt("Ration", &(rows[i].ratio));
+            ImGui::Checkbox("Recursive", &(rows[i].recursive));
+            if (rows[i].recursive)
+            {
+                ImGui::InputInt("columns", &(rows[i].columnCount));
+                generateColumns(rows[i].columnCount, rows[i].columns, number);
+            }
+            else
+            {
+                ImGui::InputInt("Texture", &(rows[i].texture));
+            }
+            ImGui::TreePop();
+        }
+    }
 }
 
 Model::Model(GLFWwindow* window) :
-	height(0), width(0), depth(0), texture(false), columnCount(0)
+	height(1), width(1), depth(1), texture(false), columnCount(1)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -65,4 +169,14 @@ Model::~Model()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+Column::Column() :
+    ratio(1), rowCount(1)
+{
+}
+
+Row::Row() :
+    ratio(1), recursive(false), texture(0), columnCount(1)
+{
 }

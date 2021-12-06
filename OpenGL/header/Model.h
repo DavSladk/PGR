@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <iostream>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
@@ -16,6 +18,8 @@ class Column;
 
 class Column
 {
+public:
+	Column();
 	int ratio;
 	int rowCount;
 	std::vector<Row> rows;
@@ -23,10 +27,12 @@ class Column
 
 class Row
 {
+public:
+	Row();
 	int ratio;
 	bool recursive;
 
-	bool texture;
+	int texture;
 	int columnCount;
 
 	std::vector<Column> columns;
@@ -38,13 +44,16 @@ public:
 	int height;
 	int width;
 	int depth;
-	bool texture;
+	int texture;
 	int columnCount;
 
 	std::vector<Column> columns;
 
-	void generateModel(std::vector<Vertex>& vertices);
-	void generateGUI();
+	void generateModel( std::vector<Vertex>& vertices , std::vector<unsigned int> &indices);
+
+	bool generateGUI();
+	void generateColumns(int &columnCount, std::vector<Column> &columns, std::string str);
+	void generateRows(int &rowCount, std::vector<Row>& columns, std::string str);
 
 	Model(GLFWwindow* window);
 	~Model();
