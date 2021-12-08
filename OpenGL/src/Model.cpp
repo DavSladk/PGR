@@ -223,7 +223,7 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
     }
     else // size == 1
     {
-
+        generateRowsModel(x1, y1, x2, y2, columns[0].rows, vertices, indices);
     }
 }
 
@@ -233,8 +233,7 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
     {
         return;
     }
-    else if (rows.size() > 1)
-    {
+    
         int parts = 0;
         int partsOffset = 0;
         float partSize = 0;
@@ -274,12 +273,6 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 
             partsOffset += rows[i].ratio;
         }
-
-    }
-    else // size == 1
-    {
-
-    }
 }
 
 bool Model::generateGUI()
