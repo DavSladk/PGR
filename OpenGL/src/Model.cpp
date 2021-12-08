@@ -206,17 +206,17 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
             if (i < columns.size() - 1 )
             {
                 // Separator left side
-                generateSquareSide(columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator right side
-                generateSquareSide(columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator front
-                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y2, texture, vertices, indices);
+                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y2, texture, vertices, indices);
             }            
 
             // Generate rows in column
             if (i == 0)
             {
-                generateRowsModel(x1, y1, x1 + columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(x1, y1, columns[i].ratio * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
             }
             else if (i == columns.size() - 1)
             {
@@ -269,7 +269,7 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 
             if (rows[i].recursive)
             {
-                generateColumnsModel(x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, rows[i].columns, vertices, indices);
+               // generateColumnsModel(x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, rows[i].columns, vertices, indices);
             }
             else
             {
