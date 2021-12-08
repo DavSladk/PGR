@@ -5,6 +5,8 @@
 #include <iostream>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct Vertex {
 	float position[3];
@@ -52,7 +54,7 @@ public:
 
 	std::vector<Column> columns;
 
-	void generateModel( std::vector<Vertex>& vertices , std::vector<unsigned int> &indices);
+	void generateModel(glm::mat4 &center, std::vector<Vertex>& vertices , std::vector<unsigned int> &indices);
 	void generateSquareSide(float constant, float y1, float z1, float y2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void generateSquareFront(float constant, float x1, float y1, float x2, float y2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void generateSquareFlat(float constant, float x1, float z1, float x2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);

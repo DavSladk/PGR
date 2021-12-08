@@ -172,6 +172,8 @@ int WinMain(void)
 
     Model modelo(window);
 
+    glm::mat4 center = glm::mat4(1.0f);
+
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -185,6 +187,7 @@ int WinMain(void)
         renderer.Clear();
 
         glm::mat4 model = glm::mat4(1.0f);
+
         model = glm::rotate(model, y * glm::radians(sensitivity), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, x * glm::radians(sensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -194,6 +197,7 @@ int WinMain(void)
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
 
+        shader.SetUniformMatrix4f("center", center);
         shader.SetUniformMatrix4f("model", model);
         shader.SetUniformMatrix4f("view", view);
         shader.SetUniformMatrix4f("projection", projection);
@@ -203,7 +207,7 @@ int WinMain(void)
 
         if (modelo.generateGUI())
         {
-            modelo.generateModel(vertices, indices);
+            modelo.generateModel(center, vertices, indices);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
             ibo.m_Count = indices.size();

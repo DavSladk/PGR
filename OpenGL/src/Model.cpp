@@ -1,11 +1,14 @@
 #include <Model.h>
 
-void Model::generateModel( std::vector<Vertex>& vertices, std::vector<unsigned int> &indices )
+void Model::generateModel(glm::mat4 &center, std::vector<Vertex>& vertices, std::vector<unsigned int> &indices )
 {
     vertices.clear();
     indices.clear();
     offset = 0;
     
+    center = glm::mat4(1.0f);
+    center = glm::translate(center, glm::vec3( - (width / 2), -(height / 2), -(depth / 2)));
+
     Vertex tmpVer;
 
     // Left outter
