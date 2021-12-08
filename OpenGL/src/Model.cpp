@@ -39,6 +39,9 @@ void Model::generateModel(glm::mat4 &center, std::vector<Vertex>& vertices, std:
     generateSquareFlat(0.0f, 0.0f, 0.0f, width, depth, texture, vertices, indices);
     // Botton inner
     generateSquareFlat(thickness, thickness, 0.0f, width - thickness, depth, texture, vertices, indices);
+
+    // Generate columns
+    generateColumnsModel(thickness,thickness,width-thickness,height-thickness, columns, vertices, indices);
 }
 
 void Model::generateSquareSide(float constant, float y1, float z1, float y2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
@@ -170,6 +173,115 @@ void Model::generateSquareFlat(float constant, float x1, float z1, float x2, flo
     offset++;
 }
 
+void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::vector<Column>& columns, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+{
+    if (columns.size() < 1)
+    {
+        return;
+    }
+    else if (columns.size() > 1)
+    {
+        int parts = 0;
+        int partsOffset = 0;
+        float partSize = 0;
+
+        for (auto& column : columns)
+        {
+            parts += column.ratio;
+        }
+
+        partSize = (x2 - x1) / (float)parts;
+
+        for (int i = 0; i < columns.size(); i++)
+        {
+            if (i < columns.size() - 1 )
+            {
+                // Separator left side
+                generateSquareSide(columns[i].ratio * partSize - thickness / 2 + (float)partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                // Separator right side
+                generateSquareSide(columns[i].ratio * partSize + thickness / 2 + (float)partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                // Separator front
+                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2 + (float)partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y2, texture, vertices, indices);
+            }            
+
+            // Generate rows in column
+            if (i == 0)
+            {
+                generateRowsModel(x1, y1, x1 + columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+            }
+            else if (i == columns.size() - 1)
+            {
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x2, y2, columns[i].rows, vertices, indices);
+            }
+            else
+            {
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x1 + columns[i].ratio * partSize + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+            }
+
+            partsOffset += columns[i].ratio;
+        }
+    }
+    else // size == 1
+    {
+
+    }
+}
+
+void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vector<Row>& rows, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+{
+    if (rows.size() < 1)
+    {
+        return;
+    }
+    else if (rows.size() > 1)
+    {
+        int parts = 0;
+        int partsOffset = 0;
+        float partSize = 0;
+
+        for (auto& row : rows)
+        {
+            parts += row.ratio;
+        }
+
+        partSize = (y2 - y1) / (float)parts;
+
+        for (int i = 0; i < rows.size(); i++)
+        {
+            if (i < rows.size() - 1)
+            {
+                // Separator upper side
+                generateSquareFlat(rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                // Separator lower side
+                generateSquareFlat(rows[i].ratio * partSize - thickness / 2 + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                // Separator front 
+                generateSquareFront(depth, x1, rows[i].ratio * partSize - thickness / 2 + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
+            }
+
+            /*
+            if (i == 0)
+            {
+                generateRowsModel(x1, y1, x1 + columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+            }
+            else if (i == columns.size())
+            {
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x2, y2, columns[i].rows, vertices, indices);
+            }
+            else
+            {
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x1 + columns[i].ratio * partSize + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+            }*/
+
+            partsOffset += rows[i].ratio;
+        }
+
+    }
+    else // size == 1
+    {
+
+    }
+}
+
 bool Model::generateGUI()
 {
     bool clicked = false;
@@ -191,7 +303,7 @@ bool Model::generateGUI()
             clicked = true;
         }
 
-        generateColumns(columnCount, columns, "");
+        generateColumnsGui(columnCount, columns, "");
                 
         ImGui::End();
     }
@@ -201,7 +313,7 @@ bool Model::generateGUI()
     return clicked;
 }
 
-void Model::generateColumns(int& columnCount, std::vector<Column> &columns, std::string str)
+void Model::generateColumnsGui(int& columnCount, std::vector<Column> &columns, std::string str)
 {
     if (columnCount < 0)
     {
@@ -225,15 +337,15 @@ void Model::generateColumns(int& columnCount, std::vector<Column> &columns, std:
         
         if (ImGui::TreeNode(text.c_str()))
         {
-            ImGui::InputInt("Ration", &(columns[i].ratio));
-            ImGui::InputInt("Rows", &(columns[i].rowCount));
-            generateRows(columns[i].rowCount, columns[i].rows, number);
+            ImGui::InputInt(("Ratio##"+number).c_str(), &(columns[i].ratio));
+            ImGui::InputInt(("Rows##"+number).c_str(), &(columns[i].rowCount));
+            generateRowsGui(columns[i].rowCount, columns[i].rows, number);
             ImGui::TreePop();
         }
     }
 }
 
-void Model::generateRows(int& rowCount, std::vector<Row>& rows, std::string str)
+void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string str)
 {
     if (rowCount < 0)
     {
@@ -257,16 +369,22 @@ void Model::generateRows(int& rowCount, std::vector<Row>& rows, std::string str)
 
         if (ImGui::TreeNode(text.c_str()))
         {
-            ImGui::InputInt("Ration", &(rows[i].ratio));
-            ImGui::Checkbox("Recursive", &(rows[i].recursive));
+            ImGui::InputInt(("Ratio##" + number).c_str(), &(rows[i].ratio));
+            ImGui::Checkbox(("Recursive##" + number).c_str(), &(rows[i].recursive));
             if (rows[i].recursive)
             {
-                ImGui::InputInt("columns", &(rows[i].columnCount));
-                generateColumns(rows[i].columnCount, rows[i].columns, number);
+                ImGui::InputInt(("Columns##" + number).c_str(), &(rows[i].columnCount));
+                generateColumnsGui(rows[i].columnCount, rows[i].columns, number);
             }
             else
             {
                 ImGui::InputInt("Texture", &(rows[i].texture));
+                ImGui::InputInt("Type", &(rows[i].type));
+                if (rows[i].type == 1)
+                {
+                    ImGui::InputInt("Handle Position", &(rows[i].handlePosition));
+                    ImGui::InputInt("Handle Orientation", &(rows[i].handleOrientation));
+                }                
             }
             ImGui::TreePop();
         }
@@ -298,6 +416,6 @@ Column::Column() :
 }
 
 Row::Row() :
-    ratio(1), recursive(false), texture(0), columnCount(1)
+    ratio(1), recursive(false), texture(0), columnCount(1), type(0), handlePosition(0), handleOrientation(0)
 {
 }

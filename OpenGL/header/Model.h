@@ -35,6 +35,9 @@ public:
 	bool recursive;
 
 	int texture;
+	int type;
+	int handlePosition;
+	int handleOrientation;
 	int columnCount;
 
 	std::vector<Column> columns;
@@ -58,10 +61,12 @@ public:
 	void generateSquareSide(float constant, float y1, float z1, float y2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void generateSquareFront(float constant, float x1, float y1, float x2, float y2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void generateSquareFlat(float constant, float x1, float z1, float x2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void generateColumnsModel(float x1, float y1, float x2, float y2, std::vector<Column>& columns, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void generateRowsModel(float x1, float y1, float x2, float y2, std::vector<Row>& rows, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 
 	bool generateGUI();
-	void generateColumns(int &columnCount, std::vector<Column> &columns, std::string str);
-	void generateRows(int &rowCount, std::vector<Row>& columns, std::string str);
+	void generateColumnsGui(int &columnCount, std::vector<Column> &columns, std::string str);
+	void generateRowsGui(int &rowCount, std::vector<Row>& columns, std::string str);
 
 	Model(GLFWwindow* window);
 	~Model();
