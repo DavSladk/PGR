@@ -175,33 +175,42 @@ void Model::generateSquareFlat(float constant, float x1, float z1, float x2, flo
 
 void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::vector<Column>& columns, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
+    // Exit if invalid amount of columns
     if (columns.size() < 1)
     {
         return;
     }
+    // Generate separators, when theyt make sense
     else if (columns.size() > 1)
     {
-        int parts = 0;
-        int partsOffset = 0;
+        // counter for ration
+        float parts = 0;
+        // counter for offseting
+        float partsOffset = 0;
+        // size of single part
         float partSize = 0;
 
+        // count up all rations
         for (auto& column : columns)
         {
             parts += column.ratio;
         }
 
-        partSize = (x2 - x1) / (float)parts;
+        // calculate size of single size
+        partSize = (x2 - x1) / parts;
 
+        // generate separators
         for (int i = 0; i < columns.size(); i++)
         {
+            // except for the last column
             if (i < columns.size() - 1 )
             {
                 // Separator left side
-                generateSquareSide(columns[i].ratio * partSize - thickness / 2 + (float)partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator right side
-                generateSquareSide(columns[i].ratio * partSize + thickness / 2 + (float)partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator front
-                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2 + (float)partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y2, texture, vertices, indices);
+                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2 + partsOffset * partSize, y2, texture, vertices, indices);
             }            
 
             // Generate rows in column
@@ -211,16 +220,17 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
             }
             else if (i == columns.size() - 1)
             {
-                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x2, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(partsOffset * partSize + thickness / 2.0f, y1, x2, y2, columns[i].rows, vertices, indices);
             }
             else
             {
-                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x1 + columns[i].ratio * partSize + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(partsOffset * partSize + thickness / 2.0f, y1, columns[i].ratio * partSize + partsOffset * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
             }
 
             partsOffset += columns[i].ratio;
         }
     }
+    // If only one column, do not render any separators.
     else // size == 1
     {
         generateRowsModel(x1, y1, x2, y2, columns[0].rows, vertices, indices);
@@ -234,8 +244,8 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
         return;
     }
     
-        int parts = 0;
-        int partsOffset = 0;
+        float parts = 0;
+        float partsOffset = 0;
         float partSize = 0;
 
         for (auto& row : rows)
@@ -250,13 +260,21 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
             if (i < rows.size() - 1)
             {
                 // Separator upper side
-                generateSquareFlat(rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                generateSquareFlat(rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
                 // Separator lower side
-                generateSquareFlat(rows[i].ratio * partSize - thickness / 2 + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                generateSquareFlat(rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
                 // Separator front 
-                generateSquareFront(depth, x1, rows[i].ratio * partSize - thickness / 2 + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
+                generateSquareFront(depth, x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
             }
 
+            if (rows[i].recursive)
+            {
+                generateColumnsModel(x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, rows[i].columns, vertices, indices);
+            }
+            else
+            {
+
+            }
             /*
             if (i == 0)
             {
@@ -330,7 +348,7 @@ void Model::generateColumnsGui(int& columnCount, std::vector<Column> &columns, s
         
         if (ImGui::TreeNode(text.c_str()))
         {
-            ImGui::InputInt(("Ratio##"+number).c_str(), &(columns[i].ratio));
+            ImGui::InputFloat(("Ratio##"+number).c_str(), &(columns[i].ratio), 1.0f);
             ImGui::InputInt(("Rows##"+number).c_str(), &(columns[i].rowCount));
             generateRowsGui(columns[i].rowCount, columns[i].rows, number);
             ImGui::TreePop();
@@ -362,7 +380,7 @@ void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string s
 
         if (ImGui::TreeNode(text.c_str()))
         {
-            ImGui::InputInt(("Ratio##" + number).c_str(), &(rows[i].ratio));
+            ImGui::InputFloat(("Ratio##" + number).c_str(), &(rows[i].ratio), 1.0f);
             ImGui::Checkbox(("Recursive##" + number).c_str(), &(rows[i].recursive));
             if (rows[i].recursive)
             {

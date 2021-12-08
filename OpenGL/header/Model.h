@@ -22,7 +22,7 @@ class Column
 {
 public:
 	Column();
-	int ratio;
+	float ratio;
 	int rowCount;
 	std::vector<Row> rows;
 };
@@ -31,7 +31,7 @@ class Row
 {
 public:
 	Row();
-	int ratio;
+	float ratio;
 	bool recursive;
 
 	int texture;
