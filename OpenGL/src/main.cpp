@@ -168,11 +168,6 @@ int WinMain(void)
     shader.SetUniform1i("u_Texture_Metal", 0);
     shader.SetUniform1i("u_Texture_Wood", 1);
 
-    vao.Unbind();
-    shader.Unbind();
-    vbo.Unbind();
-    ibo.Unbind();
-
     Renderer renderer;    
 
     Model modelo(window);
@@ -209,6 +204,9 @@ int WinMain(void)
         if (modelo.generateGUI())
         {
             modelo.generateModel(vertices, indices);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+            ibo.m_Count = indices.size();
         }
 
         /* Swap front and back buffers */

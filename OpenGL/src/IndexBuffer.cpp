@@ -5,7 +5,7 @@ IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 {
     glGenBuffers(1, &m_RendererID); // generating buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID); // select buffer as array buffer
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW); // where to get data
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_DYNAMIC_DRAW); // where to get data
 }
 
 IndexBuffer::~IndexBuffer()
