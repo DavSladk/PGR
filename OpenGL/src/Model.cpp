@@ -233,7 +233,6 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
 	// If only one column, do not render any separators.
 	else // size == 1
 	{
-		// Why there needs to be thickness/2 ? I dont know.
 		generateRowsModel(x1, y1, x2, y2, columns[0].rows, vertices, indices);
 	}
 }
@@ -315,7 +314,7 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 	{
 		if (rows[0].recursive)
 		{
-			generateColumnsModel(x1, y1, x2, y2/* + thickness / 2.0f*/, rows[0].columns, vertices, indices);
+			generateColumnsModel(x1, y1, x2, y2, rows[0].columns, vertices, indices);
 		}
 		else
 		{
@@ -325,12 +324,10 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 			}
 			else if (rows[0].type == 1)
 			{
-				generateDoorModel(x1, y1, x2, y2/* + thickness / 2.0f*/, rows[0], vertices, indices);
+				generateDoorModel(x1, y1, x2, y2, rows[0], vertices, indices);
 
 			}
 		}
-		// Why there needs to be thickness/2 ? I dont know.
-		//generateRowsModel(x1, y1, x2, y2 + thickness / 2.0f, columns[0].rows, vertices, indices);
 	}
 }
 
@@ -346,6 +343,11 @@ void Model::generateDoorModel(float x1, float y1, float x2, float y2, Row& row, 
 	generateSquareFlat(y1 - thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
 	// Generate front
 	generateSquareFront(depth + thickness, x1 - thickness / 3.0f, y1 - thickness / 3.0f, x2 + thickness / 3.0f, y2 + thickness / 3.0f, row.texture, vertices, indices);
+}
+
+void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+{
+	// TO DO
 }
 
 bool Model::generateGUI()
