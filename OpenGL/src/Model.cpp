@@ -233,6 +233,7 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
 	// If only one column, do not render any separators.
 	else // size == 1
 	{
+		// Why there needs to be thickness/2 ? I dont know.
 		generateRowsModel(x1, y1, x2, y2, columns[0].rows, vertices, indices);
 	}
 }
@@ -243,53 +244,108 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 	{
 		return;
 	}
-
-	float parts = 0;
-	float partsOffset = 0;
-	float partSize = 0;
-
-	for (auto& row : rows)
+	else if (rows.size() > 1)
 	{
-		parts += row.ratio;
-	}
+		float parts = 0;
+		float partsOffset = 0;
+		float partSize = 0;
 
-	partSize = (y2 - y1) / (float)parts;
-
-	for (int i = 0; i < rows.size(); i++)
-	{
-		if (i < rows.size() - 1)
+		for (auto& row : rows)
 		{
-			// Separator upper side
-			generateSquareFlat(y1 + rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
-			// Separator lower side
-			generateSquareFlat(y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
-			// Separator front 
-			generateSquareFront(depth, x1, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
+			parts += row.ratio;
 		}
 
-		if (rows[i].recursive)
-		{
+		partSize = (y2 - y1) / (float)parts;
 
-			if (i == 0)
+		for (int i = 0; i < rows.size(); i++)
+		{
+			if (i < rows.size() - 1)
 			{
-				generateColumnsModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i].columns, vertices, indices);
+				// Separator upper side
+				generateSquareFlat(y1 + rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+				// Separator lower side
+				generateSquareFlat(y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+				// Separator front 
+				generateSquareFront(depth, x1, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
 			}
-			else if (i == columns.size() - 1)
+
+			if (rows[i].recursive)
 			{
-				generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i].columns, vertices, indices);
+
+				if (i == 0)
+				{
+					generateColumnsModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i].columns, vertices, indices);
+				}
+				else if (i == rows.size() - 1)
+				{
+					generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i].columns, vertices, indices);
+				}
+				else
+				{
+					generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i].columns, vertices, indices);
+				}
 			}
 			else
 			{
-				generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i].columns, vertices, indices);
+				if (rows[i].type == 0)
+				{
+					// generate nothing
+				}
+				else if (rows[i].type == 1)
+				{
+					if (i == 0)
+					{
+						generateDoorModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i], vertices, indices);
+					}
+					else if (i == rows.size() - 1)
+					{
+						generateDoorModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i], vertices, indices);
+					}
+					else
+					{
+						generateDoorModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i], vertices, indices);
+					}
+				}
 			}
+
+			partsOffset += rows[i].ratio;
+		}
+	}
+	else // size == 1
+	{
+		if (rows[0].recursive)
+		{
+			generateColumnsModel(x1, y1, x2, y2/* + thickness / 2.0f*/, rows[0].columns, vertices, indices);
 		}
 		else
 		{
+			if (rows[0].type == 0)
+			{
+				// generate nothing
+			}
+			else if (rows[0].type == 1)
+			{
+				generateDoorModel(x1, y1, x2, y2/* + thickness / 2.0f*/, rows[0], vertices, indices);
 
+			}
 		}
-
-		partsOffset += rows[i].ratio;
+		// Why there needs to be thickness/2 ? I dont know.
+		//generateRowsModel(x1, y1, x2, y2 + thickness / 2.0f, columns[0].rows, vertices, indices);
 	}
+}
+
+void Model::generateDoorModel(float x1, float y1, float x2, float y2, Row& row, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+{
+	// Generate top
+	generateSquareFlat(y2 + thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	// Generate left
+	generateSquareSide(x1 - thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	// Generate right
+	generateSquareSide(x2 + thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	// Generate bottom
+	generateSquareFlat(y1 - thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	// Generate front
+	generateSquareFront(depth + thickness, x1 - thickness / 3.0f, y1 - thickness / 3.0f, x2 + thickness / 3.0f, y2 + thickness / 3.0f, row.texture, vertices, indices);
 }
 
 bool Model::generateGUI()
