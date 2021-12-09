@@ -206,25 +206,25 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
             if (i < columns.size() - 1 )
             {
                 // Separator left side
-                generateSquareSide(columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator right side
-                generateSquareSide(columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+                generateSquareSide(x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
                 // Separator front
-                generateSquareFront(depth, columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y2, texture, vertices, indices);
+                generateSquareFront(depth, x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y2, texture, vertices, indices);
             }            
 
             // Generate rows in column
             if (i == 0)
             {
-                generateRowsModel(x1, y1, columns[i].ratio * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(x1, y1, x1 + columns[i].ratio * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
             }
             else if (i == columns.size() - 1)
             {
-                generateRowsModel(partsOffset * partSize + thickness / 2.0f, y1, x2, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2.0f, y1, x2, y2, columns[i].rows, vertices, indices);
             }
             else
             {
-                generateRowsModel(partsOffset * partSize + thickness / 2.0f, y1, columns[i].ratio * partSize + partsOffset * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
+                generateRowsModel(x1 + partsOffset * partSize + thickness / 2.0f, y1, x1 + columns[i].ratio * partSize + partsOffset * partSize - thickness / 2.0f, y2, columns[i].rows, vertices, indices);
             }
 
             partsOffset += columns[i].ratio;
@@ -260,34 +260,33 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
             if (i < rows.size() - 1)
             {
                 // Separator upper side
-                generateSquareFlat(rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                generateSquareFlat(y1 + rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
                 // Separator lower side
-                generateSquareFlat(rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+                generateSquareFlat(y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
                 // Separator front 
-                generateSquareFront(depth, x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
+                generateSquareFront(depth, x1, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
             }
 
             if (rows[i].recursive)
             {
                // generateColumnsModel(x1, rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, rows[i].columns, vertices, indices);
+                if (i == 0)
+                {
+                    generateColumnsModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i].columns, vertices, indices);
+                }
+                else if (i == columns.size() - 1)
+                {
+                    generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i].columns, vertices, indices);
+                }
+                else
+                {
+                    generateColumnsModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i].columns, vertices, indices);
+                }
             }
             else
             {
 
             }
-            /*
-            if (i == 0)
-            {
-                generateRowsModel(x1, y1, x1 + columns[i].ratio * partSize - thickness / 2 + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
-            }
-            else if (i == columns.size())
-            {
-                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x2, y2, columns[i].rows, vertices, indices);
-            }
-            else
-            {
-                generateRowsModel(x1 + partsOffset * partSize + thickness / 2, y1, x1 + columns[i].ratio * partSize + partsOffset * partSize, y2, columns[i].rows, vertices, indices);
-            }*/
 
             partsOffset += rows[i].ratio;
         }
