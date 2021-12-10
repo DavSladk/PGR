@@ -350,59 +350,85 @@ void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row
 	float handleOffsetHorizontal = 0.0f;
 	float handleOffsetVertical = 0.0f;
 
+	if (row.handlePosition == 0)
+	{
+		handleOffsetHorizontal = (x2 - x1) / 2;
+		handleOffsetVertical = (y2 - y1) / 2;
+	}
+	else if (row.handlePosition == 1)
+	{
+		handleOffsetHorizontal = (x2 - x1) / 2;
+		handleOffsetVertical = y2 - 2 * thickness;
+	}
+	else if (row.handlePosition == 2)
+	{
+		handleOffsetHorizontal = x2 - 2 * thickness;
+		handleOffsetVertical = (y2 - y1) / 2;
+	}
+	else if (row.handlePosition == 3)
+	{
+		handleOffsetHorizontal = (x2 - x1) / 2;
+		handleOffsetVertical = y1 + 2*thickness;
+	}
+	else if (row.handlePosition == 4)
+	{
+		handleOffsetHorizontal = x1 + 2 * thickness;
+		handleOffsetVertical = (y2 - y1) / 2;
+	}
+
 	if (row.handleOrientation == 0)
 	{
 		// Left outter
-		generateSquareSide(-3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Left inner
-		generateSquareSide(-2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareSide(-2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, 1, vertices, indices);
 		// Left upper
-		generateSquareFlat(thickness / 2, -3 * thickness, depth + thickness, -2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Left bottom
-		generateSquareFlat(-thickness / 2, -3 * thickness, depth + thickness, -2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Right outter
-		generateSquareSide(3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Right inner
-		generateSquareSide(2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareSide(2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, 1, vertices, indices);
 		// Right upper
-		generateSquareFlat(thickness / 2, 3 * thickness, depth + thickness, 2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Right bottom
-		generateSquareFlat(-thickness / 2, 3 * thickness, depth + thickness, 2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Front outter
-		generateSquareFront(depth + thickness * 3, -3 * thickness, -thickness / 2, 3 * thickness, thickness / 2, 1, vertices, indices);
+		generateSquareFront(depth + thickness * 3, -3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, 1, vertices, indices);
 		// Front inner
-		generateSquareFront(depth + thickness * 2, -2 * thickness, -thickness / 2, 2 * thickness, thickness / 2, 1, vertices, indices);
+		generateSquareFront(depth + thickness * 2, -2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 2 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, 1, vertices, indices);
 		// Front upper
-		generateSquareFlat(thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
 		// Front bottom
-		generateSquareFlat(-thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
 	}
 	else if (row.handleOrientation == 1)
 	{
 		// Up upper
-		generateSquareFlat(3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
 		// Up bottom
-		generateSquareFlat(2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Up left
-		generateSquareSide(-thickness / 2,2*thickness, depth + thickness, 3*thickness, depth + 3*thickness, 1, vertices, indices );
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal,2*thickness + handleOffsetVertical, depth + thickness, 3*thickness + handleOffsetVertical, depth + 3*thickness, 1, vertices, indices );
 		// Up right
-		generateSquareSide(thickness / 2, 2 * thickness, depth + thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, depth + thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Down upper
-		generateSquareFlat(-2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
 		// Down bottom
-		generateSquareFlat(-3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(-3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
 		// Down left
-		generateSquareSide(-thickness / 2, -2 * thickness, depth + thickness, -3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Down right
-		generateSquareSide(thickness / 2, -2 * thickness, depth + thickness, -3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Middle outter
-		generateSquareFront(depth + 3 * thickness, -thickness / 2, -3 * thickness, thickness / 2, 3 * thickness, 1, vertices, indices);
+		generateSquareFront(depth + 3 * thickness, -thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 3 * thickness + handleOffsetVertical, 1, vertices, indices);
 		// Middle inner
-		generateSquareFront(depth + 2 * thickness, -thickness / 2, -2 * thickness, thickness / 2, 2 * thickness, 1, vertices, indices);
+		generateSquareFront(depth + 2 * thickness, -thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, 1, vertices, indices);
 		// Middle left
-		generateSquareSide(-thickness / 2, -3 * thickness, depth + 2 *thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 *thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 		// Middle right
-		generateSquareSide(thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 * thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
 	}
 }
 
