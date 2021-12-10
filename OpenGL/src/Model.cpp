@@ -325,7 +325,7 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 			else if (rows[0].type == 1)
 			{
 				generateDoorModel(x1, y1, x2, y2, rows[0], vertices, indices);
-
+				generateHandleModel(x1, y1, x2, y2, rows[0], vertices, indices);
 			}
 		}
 	}
@@ -347,7 +347,63 @@ void Model::generateDoorModel(float x1, float y1, float x2, float y2, Row& row, 
 
 void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
-	// TO DO
+	float handleOffsetHorizontal = 0.0f;
+	float handleOffsetVertical = 0.0f;
+
+	if (row.handleOrientation == 0)
+	{
+		// Left outter
+		generateSquareSide(-3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		// Left inner
+		generateSquareSide(-2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		// Left upper
+		generateSquareFlat(thickness / 2, -3 * thickness, depth + thickness, -2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		// Left bottom
+		generateSquareFlat(-thickness / 2, -3 * thickness, depth + thickness, -2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		// Right outter
+		generateSquareSide(3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		// Right inner
+		generateSquareSide(2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		// Right upper
+		generateSquareFlat(thickness / 2, 3 * thickness, depth + thickness, 2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		// Right bottom
+		generateSquareFlat(-thickness / 2, 3 * thickness, depth + thickness, 2 * thickness, depth + 2 * thickness, 1, vertices, indices);
+		// Front outter
+		generateSquareFront(depth + thickness * 3, -3 * thickness, -thickness / 2, 3 * thickness, thickness / 2, 1, vertices, indices);
+		// Front inner
+		generateSquareFront(depth + thickness * 2, -2 * thickness, -thickness / 2, 2 * thickness, thickness / 2, 1, vertices, indices);
+		// Front upper
+		generateSquareFlat(thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		// Front bottom
+		generateSquareFlat(-thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+	}
+	else if (row.handleOrientation == 1)
+	{
+		// Up upper
+		generateSquareFlat(3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		// Up bottom
+		generateSquareFlat(2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		// Up left
+		generateSquareSide(-thickness / 2,2*thickness, depth + thickness, 3*thickness, depth + 3*thickness, 1, vertices, indices );
+		// Up right
+		generateSquareSide(thickness / 2, 2 * thickness, depth + thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		// Down upper
+		generateSquareFlat(-2 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 2 * thickness, 1, vertices, indices);
+		// Down bottom
+		generateSquareFlat(-3 * thickness, -thickness / 2, depth + thickness, thickness / 2, depth + 3 * thickness, 1, vertices, indices);
+		// Down left
+		generateSquareSide(-thickness / 2, -2 * thickness, depth + thickness, -3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		// Down right
+		generateSquareSide(thickness / 2, -2 * thickness, depth + thickness, -3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		// Middle outter
+		generateSquareFront(depth + 3 * thickness, -thickness / 2, -3 * thickness, thickness / 2, 3 * thickness, 1, vertices, indices);
+		// Middle inner
+		generateSquareFront(depth + 2 * thickness, -thickness / 2, -2 * thickness, thickness / 2, 2 * thickness, 1, vertices, indices);
+		// Middle left
+		generateSquareSide(-thickness / 2, -3 * thickness, depth + 2 *thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+		// Middle right
+		generateSquareSide(thickness / 2, -3 * thickness, depth + 2 * thickness, 3 * thickness, depth + 3 * thickness, 1, vertices, indices);
+	}
 }
 
 bool Model::generateGUI()
