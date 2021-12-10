@@ -295,14 +295,17 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 					if (i == 0)
 					{
 						generateDoorModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i], vertices, indices);
+						generateHandleModel(x1, y1, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f, rows[i], vertices, indices);
 					}
 					else if (i == rows.size() - 1)
 					{
 						generateDoorModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i], vertices, indices);
+						generateHandleModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y2, rows[i], vertices, indices);
 					}
 					else
 					{
 						generateDoorModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i], vertices, indices);
+						generateHandleModel(x1, y1 + thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, rows[i], vertices, indices);
 					}
 				}
 			}
@@ -352,28 +355,28 @@ void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row
 
 	if (row.handlePosition == 0)
 	{
-		handleOffsetHorizontal = (x2 - x1) / 2;
-		handleOffsetVertical = (y2 - y1) / 2;
+		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
+		handleOffsetVertical = y1 + (y2 - y1) / 2;
 	}
 	else if (row.handlePosition == 1)
 	{
-		handleOffsetHorizontal = (x2 - x1) / 2;
+		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
 		handleOffsetVertical = y2 - 2 * thickness;
 	}
 	else if (row.handlePosition == 2)
 	{
 		handleOffsetHorizontal = x2 - 2 * thickness;
-		handleOffsetVertical = (y2 - y1) / 2;
+		handleOffsetVertical = y1 + (y2 - y1) / 2;
 	}
 	else if (row.handlePosition == 3)
 	{
-		handleOffsetHorizontal = (x2 - x1) / 2;
+		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
 		handleOffsetVertical = y1 + 2*thickness;
 	}
 	else if (row.handlePosition == 4)
 	{
 		handleOffsetHorizontal = x1 + 2 * thickness;
-		handleOffsetVertical = (y2 - y1) / 2;
+		handleOffsetVertical = y1 + (y2 - y1) / 2;
 	}
 
 	if (row.handleOrientation == 0)
