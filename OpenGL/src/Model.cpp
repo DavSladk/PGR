@@ -449,13 +449,25 @@ void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row
 bool Model::generateGUI()
 {
 	bool clicked = false;
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_MenuBar;
+	bool* p_open = NULL;
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
 	{
-		ImGui::Begin("Parametrs");
+		ImGui::Begin("Parametrs", p_open, window_flags);
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Menu"))
+			{
+				ImGui::MenuItem("Simplified", NULL, &simplified);
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}	
 		ImGui::InputFloat("Height", &height, 0.1f);
 		ImGui::InputFloat("Width", &width, 0.1f);
 		ImGui::InputFloat("Depth", &depth, 0.1f);
@@ -554,9 +566,9 @@ void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string s
 					{
 						ImGui::InputFloat(("Horizontal##" + number).c_str(), &(rows[i].handleHorizontalOffset), 0.02f);
 						ImGui::InputFloat(("Vertical##" + number).c_str(), &(rows[i].handleVerticalOffset), 0.02f);
+						ImGui::InputInt("Handle Texture", &(rows[i].handleTexture));
 					}
-					ImGui::InputInt("Handle Orientation", &(rows[i].handleOrientation));
-					ImGui::InputInt("Handle Texture", &(rows[i].handleTexture));
+					ImGui::InputInt("Handle Orientation", &(rows[i].handleOrientation));					
 				}
 			}
 			ImGui::TreePop();
