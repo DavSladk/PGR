@@ -352,86 +352,97 @@ void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row
 {
 	float handleOffsetHorizontal = 0.0f;
 	float handleOffsetVertical = 0.0f;
+	int texture = row.handleTexture;
 
-	if (row.handlePosition == 0)
+	if (simplified)
 	{
-		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
-		handleOffsetVertical = y1 + (y2 - y1) / 2;
+		texture = 0;
+		if (row.handlePosition == 1)
+		{
+			handleOffsetHorizontal = x1 + (x2 - x1) / 2;
+			handleOffsetVertical = y2 - 2 * thickness;
+		}
+		else if (row.handlePosition == 2)
+		{
+			handleOffsetHorizontal = x2 - 2 * thickness;
+			handleOffsetVertical = y1 + (y2 - y1) / 2;
+		}
+		else if (row.handlePosition == 3)
+		{
+			handleOffsetHorizontal = x1 + (x2 - x1) / 2;
+			handleOffsetVertical = y1 + 2 * thickness;
+		}
+		else if (row.handlePosition == 4)
+		{
+			handleOffsetHorizontal = x1 + 2 * thickness;
+			handleOffsetVertical = y1 + (y2 - y1) / 2;
+		}
+		else
+		{
+			handleOffsetHorizontal = x1 + (x2 - x1) / 2;
+			handleOffsetVertical = y1 + (y2 - y1) / 2;
+		}
 	}
-	else if (row.handlePosition == 1)
+	else
 	{
-		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
-		handleOffsetVertical = y2 - 2 * thickness;
+		handleOffsetHorizontal = x1 + (x2 - x1) / 2 + row.handleHorizontalOffset;
+		handleOffsetVertical = y1 + (y2 - y1) / 2 + row.handleVerticalOffset;
 	}
-	else if (row.handlePosition == 2)
-	{
-		handleOffsetHorizontal = x2 - 2 * thickness;
-		handleOffsetVertical = y1 + (y2 - y1) / 2;
-	}
-	else if (row.handlePosition == 3)
-	{
-		handleOffsetHorizontal = x1 + (x2 - x1) / 2;
-		handleOffsetVertical = y1 + 2*thickness;
-	}
-	else if (row.handlePosition == 4)
-	{
-		handleOffsetHorizontal = x1 + 2 * thickness;
-		handleOffsetVertical = y1 + (y2 - y1) / 2;
-	}
+	
 
 	if (row.handleOrientation == 0)
 	{
 		// Left outter
-		generateSquareSide(-3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Left inner
-		generateSquareSide(-2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareSide(-2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, texture, vertices, indices);
 		// Left upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Left bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Right outter
-		generateSquareSide(3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Right inner
-		generateSquareSide(2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareSide(2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, texture, vertices, indices);
 		// Right upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Right bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Front outter
-		generateSquareFront(depth + thickness * 3, -3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, 1, vertices, indices);
+		generateSquareFront(depth + thickness * 3, -3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, texture, vertices, indices);
 		// Front inner
-		generateSquareFront(depth + thickness * 2, -2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 2 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, 1, vertices, indices);
+		generateSquareFront(depth + thickness * 2, -2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 2 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, texture, vertices, indices);
 		// Front upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
 		// Front bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
 	}
 	else if (row.handleOrientation == 1)
 	{
 		// Up upper
-		generateSquareFlat(3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
 		// Up bottom
-		generateSquareFlat(2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Up left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal,2*thickness + handleOffsetVertical, depth + thickness, 3*thickness + handleOffsetVertical, depth + 3*thickness, 1, vertices, indices );
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal,2*thickness + handleOffsetVertical, depth + thickness, 3*thickness + handleOffsetVertical, depth + 3*thickness, texture, vertices, indices );
 		// Up right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, depth + thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, depth + thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Down upper
-		generateSquareFlat(-2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, 1, vertices, indices);
+		generateSquareFlat(-2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
 		// Down bottom
-		generateSquareFlat(-3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareFlat(-3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
 		// Down left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Down right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Middle outter
-		generateSquareFront(depth + 3 * thickness, -thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 3 * thickness + handleOffsetVertical, 1, vertices, indices);
+		generateSquareFront(depth + 3 * thickness, -thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 3 * thickness + handleOffsetVertical, texture, vertices, indices);
 		// Middle inner
-		generateSquareFront(depth + 2 * thickness, -thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, 1, vertices, indices);
+		generateSquareFront(depth + 2 * thickness, -thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, texture, vertices, indices);
 		// Middle left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 *thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 *thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 		// Middle right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 * thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, 1, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 * thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
 	}
 }
 
@@ -535,8 +546,17 @@ void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string s
 				ImGui::InputInt("Type", &(rows[i].type));
 				if (rows[i].type == 1)
 				{
-					ImGui::InputInt("Handle Position", &(rows[i].handlePosition));
+					if (simplified)
+					{
+						ImGui::InputInt("Handle Position", &(rows[i].handlePosition));
+					}
+					else
+					{
+						ImGui::InputFloat(("Horizontal##" + number).c_str(), &(rows[i].handleHorizontalOffset), 0.02f);
+						ImGui::InputFloat(("Vertical##" + number).c_str(), &(rows[i].handleVerticalOffset), 0.02f);
+					}
 					ImGui::InputInt("Handle Orientation", &(rows[i].handleOrientation));
+					ImGui::InputInt("Handle Texture", &(rows[i].handleTexture));
 				}
 			}
 			ImGui::TreePop();
@@ -545,7 +565,7 @@ void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string s
 }
 
 Model::Model(GLFWwindow* window) :
-	height(1), width(1), depth(1), texture(false), columnCount(1)
+	height(1), width(1), depth(1), texture(false), columnCount(1), simplified(true)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -569,6 +589,6 @@ Column::Column() :
 }
 
 Row::Row() :
-	ratio(1), recursive(false), texture(0), columnCount(1), type(0), handlePosition(0), handleOrientation(0)
+	ratio(1), recursive(false), texture(0), columnCount(1), type(0), handlePosition(0), handleOrientation(0), handleTexture(0), handleHorizontalOffset(0), handleVerticalOffset(0)
 {
 }

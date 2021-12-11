@@ -159,14 +159,22 @@ int WinMain(void)
 	Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 	shader.Bind();
 
-	Texture textureMetal("res/textures/metal.png");
-	Texture textureWood("res/textures/wood.png");
-	textureMetal.Unbind();
-	textureWood.Unbind();
-	textureMetal.Bind(0);
-	textureWood.Bind(1);
-	shader.SetUniform1i("u_Texture_Metal", 0);
-	shader.SetUniform1i("u_Texture_Wood", 1);
+	Texture textureMetalLight("res/textures/metal-light.png");
+	Texture textureMetalDark("res/textures/metal-dark.png");
+	Texture textureWoodLight("res/textures/wood-light.png");
+	Texture textureWoodDark("res/textures/wood-dark.png");
+	textureMetalLight.Unbind();
+	textureMetalDark.Unbind();
+	textureWoodLight.Unbind();
+	textureWoodDark.Unbind();
+	textureMetalLight.Bind(0);
+	textureMetalDark.Bind(1);
+	textureWoodLight.Bind(2);
+	textureWoodDark.Bind(3);
+	shader.SetUniform1i("u_Texture_Metal_Light", 0);
+	shader.SetUniform1i("u_Texture_Metal_Dark", 1);
+	shader.SetUniform1i("u_Texture_Wood_Light", 2);
+	shader.SetUniform1i("u_Texture_Wood_Dark", 3);
 
 	Renderer renderer;
 

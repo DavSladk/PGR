@@ -38,6 +38,9 @@ public:
 	int type;
 	int handlePosition;
 	int handleOrientation;
+	int handleTexture;
+	float handleHorizontalOffset;
+	float handleVerticalOffset;
 	int columnCount;
 
 	std::vector<Column> columns;
@@ -46,6 +49,7 @@ public:
 class Model
 {
 public:
+	bool simplified;
 	float height;
 	float width;
 	float depth;
