@@ -14,23 +14,12 @@ uniform sampler2D u_Texture_Metal_Dark;
 uniform sampler2D u_Texture_Wood_Light;
 uniform sampler2D u_Texture_Wood_Dark;
 
+uniform int lighting;
+
 void main()
 {
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
     vec3 lightPos = vec3(100.0, 100.0, 100.0);
-
-    // Ambient stuff
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
-
-    // Diffuse stuff
-    vec3 norm = normalize(v_Normal);
-    vec3 lightDir = normalize(lightPos - v_FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
-
-    // result lighting
-    vec3 result = ambient + diffuse;
 
     vec4 texColor;
 
@@ -52,5 +41,27 @@ void main()
     }
     
     color = v_Color;
-    color = vec4(result,1.0) * texColor;
+
+    if(lighting == 1)
+    {
+        // Ambient stuff
+        float ambientStrength = 0.1;
+        vec3 ambient = ambientStrength * lightColor;
+
+        // Diffuse stuff
+        vec3 norm = normalize(v_Normal);
+        vec3 lightDir = normalize(lightPos - v_FragPos);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * lightColor;
+
+        // result lighting
+        vec3 result = ambient + diffuse;
+
+        color = vec4(result,1.0) * texColor;
+    }
+    else
+    {
+        color = texColor;
+    }
+    
 };

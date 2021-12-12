@@ -1388,6 +1388,18 @@
     <Image Include="res\textures\metal.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\metal-dark.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\metal-light.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wood-dark.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wood-light.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="header\vendor\glm\CMakeLists.txt" />

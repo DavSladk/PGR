@@ -56,6 +56,7 @@ public:
 	float depth;
 	int texture;
 	int columnCount;
+	bool lighting;
 
 	unsigned int offset = 0;
 	float thickness = 0.02f;

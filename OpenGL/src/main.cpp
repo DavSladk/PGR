@@ -210,6 +210,15 @@ int WinMain(void)
 		shader.SetUniformMatrix4f("model", model);
 		shader.SetUniformMatrix4f("view", view);
 		shader.SetUniformMatrix4f("projection", projection);
+		if (modelo.lighting)
+		{
+			shader.SetUniform1i("lighting", 1);
+		}
+		else
+		{
+			shader.SetUniform1i("lighting", 0);
+		}
+		
 
 		// Draw
 		renderer.Draw(vao, ibo, shader);

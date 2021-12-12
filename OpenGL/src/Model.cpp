@@ -508,6 +508,7 @@ bool Model::generateGUI()
 			if (ImGui::BeginMenu("Menu"))
 			{
 				ImGui::MenuItem("Simplified", NULL, &simplified);
+				ImGui::MenuItem("Lighting", NULL, &lighting);
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -621,7 +622,7 @@ void Model::generateRowsGui(int& rowCount, std::vector<Row>& rows, std::string s
 }
 
 Model::Model(GLFWwindow* window) :
-	height(1), width(1), depth(1), texture(false), columnCount(1), simplified(true)
+	height(1), width(1), depth(1), texture(false), columnCount(1), simplified(true), lighting(false)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
