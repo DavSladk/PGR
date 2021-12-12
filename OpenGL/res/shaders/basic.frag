@@ -5,7 +5,9 @@ layout(location = 0) out vec4 color;
 in vec2 v_TexCoord;
 in float v_TexType;
 in vec4 v_Color;
+
 in vec3 v_Normal;
+in vec3 v_FragPos;
 
 uniform sampler2D u_Texture_Metal_Light;
 uniform sampler2D u_Texture_Metal_Dark;
@@ -15,8 +17,20 @@ uniform sampler2D u_Texture_Wood_Dark;
 void main()
 {
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    vec3 lightPos = vec3(100.0, 100.0, 100.0);
+
+    // Ambient stuff
     float ambientStrength = 0.1;
-    vec4 ambient = vec4(ambientStrength * lightColor, 1.0);
+    vec3 ambient = ambientStrength * lightColor;
+
+    // Diffuse stuff
+    vec3 norm = normalize(v_Normal);
+    vec3 lightDir = normalize(lightPos - v_FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    // result lighting
+    vec3 result = ambient + diffuse;
 
     vec4 texColor;
 
@@ -38,5 +52,5 @@ void main()
     }
     
     color = v_Color;
-    color = ambient * texColor;
+    color = vec4(result,1.0) * texColor;
 };

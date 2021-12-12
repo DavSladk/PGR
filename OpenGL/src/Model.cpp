@@ -12,39 +12,41 @@ void Model::generateModel(glm::mat4& center, std::vector<Vertex>& vertices, std:
 	Vertex tmpVer;
 
 	// Left outter
-	generateSquareSide(0.0f, 0.0f, 0.0f, height, depth, texture, vertices, indices);
+	generateSquareSide(0.0f, 0.0f, 0.0f, height, depth, Normal::LEFT, texture, vertices, indices);
 	// Left inner
-	generateSquareSide(thickness, thickness, 0.0f, height - thickness, depth - thickness, texture, vertices, indices);
+	generateSquareSide(thickness, thickness, 0.0f, height - thickness, depth, Normal::RIGHT, texture, vertices, indices);
 	// Right outter
-	generateSquareSide(width, 0.0f, 0.0f, height, depth, texture, vertices, indices);
+	generateSquareSide(width, 0.0f, 0.0f, height, depth, Normal::RIGHT, texture, vertices, indices);
 	// Right inner
-	generateSquareSide(width - thickness, thickness, 0.0f, height - thickness, depth - thickness, texture, vertices, indices);
+	generateSquareSide(width - thickness, thickness, 0.0f, height - thickness, depth, Normal::LEFT, texture, vertices, indices);
 
 	// Left front
-	generateSquareFront(depth, 0.0f, 0.0f, thickness, height, texture, vertices, indices);
+	generateSquareFront(depth, 0.0f, 0.0f, thickness, height, Normal::FRONT, texture, vertices, indices);
 	// Right front
-	generateSquareFront(depth, width - thickness, 0.0f, width, height, texture, vertices, indices);
+	generateSquareFront(depth, width - thickness, 0.0f, width, height, Normal::FRONT, texture, vertices, indices);
 	// Top front
-	generateSquareFront(depth, thickness, height - thickness, width - thickness, height, texture, vertices, indices);
+	generateSquareFront(depth, thickness, height - thickness, width - thickness, height, Normal::FRONT, texture, vertices, indices);
 	// Botton front
-	generateSquareFront(depth, thickness, 0.0f, width - thickness, thickness, texture, vertices, indices);
-	// Back
-	generateSquareFront(0.0f, 0.0f, 0.0f, width, height, texture, vertices, indices);
+	generateSquareFront(depth, thickness, 0.0f, width - thickness, thickness, Normal::FRONT, texture, vertices, indices);
+	// Back outer
+	generateSquareFront(0.0f, 0.0f, 0.0f, width, height, Normal::BACK, texture, vertices, indices);
+	// Back inner
+	generateSquareFront(thickness, thickness, thickness, width-thickness, height-thickness, Normal::FRONT, texture, vertices, indices);
 
 	// Top outter
-	generateSquareFlat(height, 0.0f, 0.0f, width, depth, texture, vertices, indices);
+	generateSquareFlat(height, 0.0f, 0.0f, width, depth, Normal::TOP, texture, vertices, indices);
 	// Top inner
-	generateSquareFlat(height - thickness, thickness, 0.0f, width - thickness, depth, texture, vertices, indices);
+	generateSquareFlat(height - thickness, thickness, 0.0f, width - thickness, depth, Normal::BOTTOM, texture, vertices, indices);
 	// Botton outter
-	generateSquareFlat(0.0f, 0.0f, 0.0f, width, depth, texture, vertices, indices);
+	generateSquareFlat(0.0f, 0.0f, 0.0f, width, depth, Normal::BOTTOM, texture, vertices, indices);
 	// Botton inner
-	generateSquareFlat(thickness, thickness, 0.0f, width - thickness, depth, texture, vertices, indices);
+	generateSquareFlat(thickness, thickness, 0.0f, width - thickness, depth, Normal::TOP, texture, vertices, indices);
 
 	// Generate columns
 	generateColumnsModel(thickness, thickness, width - thickness, height - thickness, columns, vertices, indices);
 }
 
-void Model::generateSquareSide(float constant, float y1, float z1, float y2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Model::generateSquareSide(float constant, float y1, float z1, float y2, float z2, Normal norm, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	Vertex tmpVer;
 
@@ -53,6 +55,7 @@ void Model::generateSquareSide(float constant, float y1, float z1, float y2, flo
 	tmpVer.color[2] = 0.0f;
 	tmpVer.position[0] = constant;
 	tmpVer.textureType = tex;
+	generateNormal(tmpVer, norm);
 
 	tmpVer.position[1] = y1;
 	tmpVer.position[2] = z1;
@@ -87,7 +90,7 @@ void Model::generateSquareSide(float constant, float y1, float z1, float y2, flo
 	offset++;
 }
 
-void Model::generateSquareFront(float constant, float x1, float y1, float x2, float y2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Model::generateSquareFront(float constant, float x1, float y1, float x2, float y2, Normal norm, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	Vertex tmpVer;
 
@@ -96,6 +99,7 @@ void Model::generateSquareFront(float constant, float x1, float y1, float x2, fl
 	tmpVer.color[2] = 0.0f;
 	tmpVer.position[2] = constant;
 	tmpVer.textureType = tex;
+	generateNormal(tmpVer, norm);
 
 	tmpVer.position[0] = x1;
 	tmpVer.position[1] = y1;
@@ -130,7 +134,7 @@ void Model::generateSquareFront(float constant, float x1, float y1, float x2, fl
 	offset++;
 }
 
-void Model::generateSquareFlat(float constant, float x1, float z1, float x2, float z2, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Model::generateSquareFlat(float constant, float x1, float z1, float x2, float z2, Normal norm, int tex, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	Vertex tmpVer;
 
@@ -139,6 +143,7 @@ void Model::generateSquareFlat(float constant, float x1, float z1, float x2, flo
 	tmpVer.color[2] = 0.0f;
 	tmpVer.position[1] = constant;
 	tmpVer.textureType = tex;
+	generateNormal(tmpVer, norm);
 
 	tmpVer.position[0] = x1;
 	tmpVer.position[2] = z1;
@@ -171,6 +176,45 @@ void Model::generateSquareFlat(float constant, float x1, float z1, float x2, flo
 	indices.push_back(offset * 4 + 3);
 	indices.push_back(offset * 4 + 0);
 	offset++;
+}
+
+void Model::generateNormal(Vertex& ver, Normal norm)
+{
+	switch (norm)
+	{
+	case Model::Normal::LEFT:
+		ver.normal[0] = -1.0f;
+		ver.normal[1] = 0.0f;
+		ver.normal[2] = 0.0f;
+		break;
+	case Model::Normal::RIGHT:
+		ver.normal[0] = 1.0f;
+		ver.normal[1] = 0.0f;
+		ver.normal[2] = 0.0f;
+		break;
+	case Model::Normal::FRONT:
+		ver.normal[0] = 0.0f;
+		ver.normal[1] = 0.0f;
+		ver.normal[2] = 1.0f;
+		break;
+	case Model::Normal::BACK:
+		ver.normal[0] = 0.0f;
+		ver.normal[1] = 0.0f;
+		ver.normal[2] = -1.0f;
+		break;
+	case Model::Normal::TOP:
+		ver.normal[0] = 0.0f;
+		ver.normal[1] = 1.0f;
+		ver.normal[2] = 0.0f;
+		break;
+	case Model::Normal::BOTTOM:
+		ver.normal[0] = 0.0f;
+		ver.normal[1] = -1.0f;
+		ver.normal[2] = 0.0f;
+		break;
+	default:
+		break;
+	}
 }
 
 void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::vector<Column>& columns, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
@@ -206,11 +250,11 @@ void Model::generateColumnsModel(float x1, float y1, float x2, float y2, std::ve
 			if (i < columns.size() - 1)
 			{
 				// Separator left side
-				generateSquareSide(x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+				generateSquareSide(x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, Normal::LEFT, texture, vertices, indices);
 				// Separator right side
-				generateSquareSide(x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, texture, vertices, indices);
+				generateSquareSide(x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y1, 0.0f, y2, depth, Normal::RIGHT, texture, vertices, indices);
 				// Separator front
-				generateSquareFront(depth, x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y2, texture, vertices, indices);
+				generateSquareFront(depth, x1 + columns[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, y1, x1 + columns[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, y2, Normal::FRONT, texture, vertices, indices);
 			}
 
 			// Generate rows in column
@@ -261,11 +305,11 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 			if (i < rows.size() - 1)
 			{
 				// Separator upper side
-				generateSquareFlat(y1 + rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+				generateSquareFlat(y1 + rows[i].ratio * partSize + thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, Normal::TOP, texture, vertices, indices);
 				// Separator lower side
-				generateSquareFlat(y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, texture, vertices, indices);
+				generateSquareFlat(y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x1, 0.0f, x2, depth, Normal::BOTTOM, texture, vertices, indices);
 				// Separator front 
-				generateSquareFront(depth, x1, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, texture, vertices, indices);
+				generateSquareFront(depth, x1, y1 + rows[i].ratio * partSize - thickness / 2.0f + partsOffset * partSize, x2, y1 + rows[i].ratio * partSize + thickness / 2 + partsOffset * partSize, Normal::FRONT, texture, vertices, indices);
 			}
 
 			if (rows[i].recursive)
@@ -337,15 +381,15 @@ void Model::generateRowsModel(float x1, float y1, float x2, float y2, std::vecto
 void Model::generateDoorModel(float x1, float y1, float x2, float y2, Row& row, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	// Generate top
-	generateSquareFlat(y2 + thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	generateSquareFlat(y2 + thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, Normal::TOP, row.texture, vertices, indices);
 	// Generate left
-	generateSquareSide(x1 - thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	generateSquareSide(x1 - thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, Normal::LEFT, row.texture, vertices, indices);
 	// Generate right
-	generateSquareSide(x2 + thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	generateSquareSide(x2 + thickness / 3.0f, y1 - thickness / 3.0f, depth, y2 + thickness / 3.0f, depth + thickness, Normal::RIGHT, row.texture, vertices, indices);
 	// Generate bottom
-	generateSquareFlat(y1 - thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, row.texture, vertices, indices);
+	generateSquareFlat(y1 - thickness / 3.0f, x1 - thickness / 3.0f, depth, x2 + thickness / 3.0f, depth + thickness, Normal::BOTTOM, row.texture, vertices, indices);
 	// Generate front
-	generateSquareFront(depth + thickness, x1 - thickness / 3.0f, y1 - thickness / 3.0f, x2 + thickness / 3.0f, y2 + thickness / 3.0f, row.texture, vertices, indices);
+	generateSquareFront(depth + thickness, x1 - thickness / 3.0f, y1 - thickness / 3.0f, x2 + thickness / 3.0f, y2 + thickness / 3.0f, Normal::FRONT, row.texture, vertices, indices);
 }
 
 void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
@@ -393,56 +437,56 @@ void Model::generateHandleModel(float x1, float y1, float x2, float y2, Row& row
 	if (row.handleOrientation == 0)
 	{
 		// Left outter
-		generateSquareSide(-3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(-3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, Normal::LEFT, texture, vertices, indices);
 		// Left inner
-		generateSquareSide(-2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareSide(-2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, Normal::RIGHT, texture, vertices, indices);
 		// Left upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, Normal::TOP, texture, vertices, indices);
 		// Left bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + thickness, -2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, Normal::BOTTOM, texture, vertices, indices);
 		// Right outter
-		generateSquareSide(3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 3 * thickness, Normal::RIGHT, texture, vertices, indices);
 		// Right inner
-		generateSquareSide(2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareSide(2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, depth + thickness, thickness / 2 + handleOffsetVertical, depth + 2 * thickness, Normal::LEFT, texture, vertices, indices);
 		// Right upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, Normal::TOP, texture, vertices, indices);
 		// Right bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, depth + thickness, 2 * thickness + handleOffsetHorizontal, depth + 2 * thickness, Normal::BOTTOM, texture, vertices, indices);
 		// Front outter
-		generateSquareFront(depth + thickness * 3, -3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, texture, vertices, indices);
+		generateSquareFront(depth + thickness * 3, -3 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 3 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, Normal::FRONT, texture, vertices, indices);
 		// Front inner
-		generateSquareFront(depth + thickness * 2, -2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 2 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, texture, vertices, indices);
+		generateSquareFront(depth + thickness * 2, -2 * thickness + handleOffsetHorizontal, -thickness / 2 + handleOffsetVertical, 2 * thickness + handleOffsetHorizontal, thickness / 2 + handleOffsetVertical, Normal::BACK, texture, vertices, indices);
 		// Front upper
-		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareFlat(thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, Normal::TOP, texture, vertices, indices);
 		// Front bottom
-		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareFlat(-thickness / 2 + handleOffsetVertical, -3 * thickness + handleOffsetHorizontal, depth + 2 * thickness, 3 * thickness + handleOffsetHorizontal, depth + 3 * thickness, Normal::BOTTOM, texture, vertices, indices);
 	}
 	else if (row.handleOrientation == 1)
 	{
 		// Up upper
-		generateSquareFlat(3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareFlat(3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, Normal::TOP, texture, vertices, indices);
 		// Up bottom
-		generateSquareFlat(2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, Normal::BOTTOM, texture, vertices, indices);
 		// Up left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal,2*thickness + handleOffsetVertical, depth + thickness, 3*thickness + handleOffsetVertical, depth + 3*thickness, texture, vertices, indices );
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal,2*thickness + handleOffsetVertical, depth + thickness, 3*thickness + handleOffsetVertical, depth + 3*thickness, Normal::LEFT, texture, vertices, indices );
 		// Up right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, depth + thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, depth + thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, Normal::RIGHT, texture, vertices, indices);
 		// Down upper
-		generateSquareFlat(-2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, texture, vertices, indices);
+		generateSquareFlat(-2 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 2 * thickness, Normal::TOP, texture, vertices, indices);
 		// Down bottom
-		generateSquareFlat(-3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareFlat(-3 * thickness + handleOffsetVertical, -thickness / 2 + handleOffsetHorizontal, depth + thickness, thickness / 2 + handleOffsetHorizontal, depth + 3 * thickness, Normal::BOTTOM, texture, vertices, indices);
 		// Down left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, Normal::LEFT, texture, vertices, indices);
 		// Down right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, depth + thickness, -3 * thickness + handleOffsetVertical, depth + 3 * thickness, Normal::RIGHT, texture, vertices, indices);
 		// Middle outter
-		generateSquareFront(depth + 3 * thickness, -thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 3 * thickness + handleOffsetVertical, texture, vertices, indices);
+		generateSquareFront(depth + 3 * thickness, -thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 3 * thickness + handleOffsetVertical, Normal::FRONT, texture, vertices, indices);
 		// Middle inner
-		generateSquareFront(depth + 2 * thickness, -thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, texture, vertices, indices);
+		generateSquareFront(depth + 2 * thickness, -thickness / 2 + handleOffsetHorizontal, -2 * thickness + handleOffsetVertical, thickness / 2 + handleOffsetHorizontal, 2 * thickness + handleOffsetVertical, Normal::BACK, texture, vertices, indices);
 		// Middle left
-		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 *thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(-thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 *thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, Normal::LEFT, texture, vertices, indices);
 		// Middle right
-		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 * thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, texture, vertices, indices);
+		generateSquareSide(thickness / 2 + handleOffsetHorizontal, -3 * thickness + handleOffsetVertical, depth + 2 * thickness, 3 * thickness + handleOffsetVertical, depth + 3 * thickness, Normal::RIGHT, texture, vertices, indices);
 	}
 }
 
