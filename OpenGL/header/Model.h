@@ -76,8 +76,4 @@ public:
 
 	Model(GLFWwindow* window);
 	~Model();
-
-	// Test stuff
-	bool show_demo_window = true;
-	bool show_another_window = false;
 };

@@ -8,6 +8,7 @@ layout(location = 3) in float texType;
 out vec2 v_TexCoord;
 out float v_TexType;
 out vec4 v_Color;
+out ve3 v_Normal;
 
 uniform mat4 center;
 uniform mat4 model;
