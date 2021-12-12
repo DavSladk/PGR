@@ -68,8 +68,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\basic.frag" />
-    <None Include="res\shaders\basic.vert" />
     <None Include="header\vendor\glm\detail\func_common.inl">
       <Filter>Header Files</Filter>
     </None>
@@ -477,6 +475,12 @@
     </None>
     <None Include="header\vendor\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="res\shaders\basic.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\shaders\basic.frag">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

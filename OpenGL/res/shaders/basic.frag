@@ -45,7 +45,7 @@ void main()
     if(lighting == 1)
     {
         // Ambient stuff
-        float ambientStrength = 0.1;
+        float ambientStrength = 0.25;
         vec3 ambient = ambientStrength * lightColor;
 
         // Diffuse stuff
